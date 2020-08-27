@@ -14,7 +14,8 @@
     "lint": "yarn run lint:ts && yarn run lint:css",
     "lint:ts": "tsc && yarn lint:eslint",
     "lint:eslint": "eslint --ext=ts,tsx \"src/**/*.{ts,tsx}\"",
-    "lint:css": "stylelint --syntax scss \"src/**/*.scss\""
+    "lint:css": "stylelint --syntax scss \"src/**/*.scss\"",
+    "storybook": "start-storybook -p 4000 -s public"
   },
   "eslintConfig": {
     "extends": "react-app"
