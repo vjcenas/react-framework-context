@@ -1,8 +1,11 @@
-import Axios from 'axios';
+import { httpClient } from '../libraries/http.library';
+import yup from '../libraries/validator.library';
+
+const client = httpClient();
 
 const services = {
   dataGET: async () => {
-    return Axios.get('/users');
+    return client.get('/users', {}, yup.mixed());
   },
 };
 
