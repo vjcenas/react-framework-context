@@ -5,3 +5,10 @@
 # untouched files of CRA
 serviceWorker.ts
 react-app-env.d.ts
+setupTests.ts
+
+/build
+/coverage
+/node_modules
+/public
+/.storybook

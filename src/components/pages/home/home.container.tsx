@@ -1,8 +1,9 @@
 import React, { useCallback, useState } from 'react';
-
-import logo from '../../../assets/icons/logo.svg';
+import { Link } from 'react-router-dom';
+import Lang from 'src/libraries/languages';
+import Button from 'src/components/atoms/button/button.container';
+import logo from 'src/assets/icons/logo.svg';
 import './home.module.scss';
-import Lang from '../../../libraries/languages';
 
 const Home: React.FC = () => {
   const [update, setUpdate] = useState('en');
@@ -30,11 +31,12 @@ const Home: React.FC = () => {
           target="_blank"
           rel="noopener noreferrer"
         >
-          Learn React in {update}
+          Learn React
         </a>
 
-        <button onClick={() => handleLanguage('en')}>English</button>
-        <button onClick={() => handleLanguage('ja')}>Japanese</button>
+        <Button onClick={() => handleLanguage('en')}>English</Button>
+        <Button onClick={() => handleLanguage('ja')}>Japanese</Button>
+        <Link to="/users">User</Link>
       </header>
     </div>
   );

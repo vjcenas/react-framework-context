@@ -24,3 +24,5 @@ yarn-error.log*
 
 # generated scss module types
 *.module.scss.d.ts
+
+/junit*.xml

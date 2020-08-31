@@ -1,11 +1,13 @@
 import React from 'react';
 
-import Home from './home.container';
 import { shallow } from 'enzyme';
+import Home from './home.container';
 
-test('renders learn react link', () => {
-  const wrapper = shallow(<Home />);
+describe(__filename, () => {
+  it('should renders learn react link', () => {
+    const wrapper = shallow(<Home />);
 
-  expect(wrapper.find('a').text()).toEqual('Learn React');
-  expect(wrapper).toBeTruthy();
+    expect(wrapper.find('a').text()).toEqual('Learn React');
+    expect(wrapper).toBeTruthy();
+  });
 });
