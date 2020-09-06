@@ -1,6 +1,6 @@
 import React, { useEffect, useCallback } from 'react';
-import { useUserContext } from 'src/contexts/user.context';
 import { RouteComponentProps } from 'react-router-dom';
+import { useUserContext } from 'src/contexts/user.context';
 import UserDetailView from './user-detail.view';
 
 type IProps = RouteComponentProps<{

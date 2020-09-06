@@ -24,16 +24,16 @@ export const thunkCreator = async <C extends string, T>(
     dispatch({
       type: actionType,
       status: TYPE_ERROR,
-      payload: error as Error,
+      payload: error,
     });
 
-    return { error: error as Error };
+    return { error };
   }
 };
 
 type IThunkReturn<T> =
   | { payload: T; error?: never }
-  | { payload?: never; error: Error };
+  | { payload?: never; error: any };
 
 export type IAsyncThunk = Record<
   string,

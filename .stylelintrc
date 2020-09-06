@@ -7,6 +7,6 @@
     "at-rule-no-unknown": [true, {
       "ignoreAtRules": ["function", "if", "else", "return", "each", "include", "mixin", "extend"]
     }],
-    "indentation": 2
+    "indentation": 2,
   }
 }

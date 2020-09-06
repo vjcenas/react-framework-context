@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { mocked } from 'ts-jest/utils';
-import { IUser } from 'src/models/user.model';
+import { ValidationError } from 'yup';
+import { IUser } from '../../models/user.model';
 import services from '../user.service';
 import { userMock } from '../mocks/user.mock';
 
@@ -17,7 +17,7 @@ describe('Commission Service', () => {
     it('should process response data successfully', async () => {
       const data = userList;
 
-      mocked(mockAxios.get).mockImplementationOnce(() =>
+      jest.spyOn(mockAxios, 'get').mockImplementationOnce(() =>
         Promise.resolve({
           data,
         })
@@ -29,23 +29,23 @@ describe('Commission Service', () => {
     });
 
     it('should throw validation error if invalid type', async () => {
-      mocked(mockAxios.get).mockImplementationOnce(() =>
+      jest.spyOn(mockAxios, 'get').mockImplementationOnce(() =>
         Promise.resolve({
           data: { test: 'error' },
         })
       );
 
-      await expect(services.listGET()).rejects.toThrow();
+      await expect(services.listGET()).rejects.toThrow(ValidationError);
     });
 
     it('should throw validation error if invalid data', async () => {
-      mocked(mockAxios.get).mockImplementationOnce(() =>
+      jest.spyOn(mockAxios, 'get').mockImplementationOnce(() =>
         Promise.resolve({
           data: [{ test: 'error' }],
         })
       );
 
-      await expect(services.listGET()).rejects.toThrow();
+      await expect(services.listGET()).rejects.toThrow(ValidationError);
     });
   });
 });

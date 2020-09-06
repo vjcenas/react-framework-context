@@ -1,13 +1,9 @@
-import axios from 'axios';
-import { mocked } from 'ts-jest/utils';
-import { IUser } from 'src/models/user.model';
+import { IUser, UserSchema, UserListSchema } from 'src/models/user.model';
 import { userMock } from 'src/services/mocks/user.mock';
 import { ValidationError } from 'yup';
 import { isString } from 'util';
-import yup from '../validator.library';
 import { httpClient } from '../http.library';
 
-const mockAxios = axios.create();
 const client = httpClient();
 
 const user: IUser = userMock();
@@ -20,23 +16,23 @@ describe('HTTP Library', () => {
 
   describe('POST', () => {
     it('should process response data successfully', async () => {
-      const data = userList;
+      const data = userList[0];
 
-      mocked(mockAxios.post).mockImplementationOnce(() =>
+      jest.spyOn(client.instance, 'post').mockImplementationOnce(() =>
         Promise.resolve({
           data,
         })
       );
 
-      const result = await client.post('/user', data, yup.mixed());
+      const result = await client.post('/user', data, UserSchema);
 
       expect(result).toEqual(data);
     });
 
-    it('should process response FormData successfully', async () => {
+    it('should process FormData request successfully', async () => {
       const data = user;
 
-      mocked(mockAxios.post).mockImplementationOnce(() =>
+      jest.spyOn(client.instance, 'post').mockImplementationOnce(() =>
         Promise.resolve({
           data,
         })
@@ -50,21 +46,31 @@ describe('HTTP Library', () => {
         }
       });
 
-      const result = await client.post('/user', formData, yup.mixed());
+      const result = await client.post('/user', formData, UserSchema);
 
       expect(result).toEqual(data);
     });
 
-    it('should throw validation error if invalid type', async () => {
-      mocked(mockAxios.post).mockImplementationOnce(() =>
+    it('should throw ValidationError', async () => {
+      jest.spyOn(client.instance, 'post').mockImplementationOnce(() =>
         Promise.resolve({
           data: { test: 'error' },
         })
       );
 
-      const result = client.post('/user', {}, yup.array().of(yup.string()));
+      const result = client.post('/user', {}, UserSchema);
 
       await expect(result).rejects.toThrow(ValidationError);
+    });
+
+    it('should throw TypeError', async () => {
+      jest
+        .spyOn(client.instance, 'post')
+        .mockImplementationOnce(() => Promise.resolve(null));
+
+      const result = client.post('/user', {}, UserSchema);
+
+      await expect(result).rejects.toThrow(TypeError);
     });
   });
 
@@ -72,27 +78,37 @@ describe('HTTP Library', () => {
     it('should process response data successfully', async () => {
       const data = userList;
 
-      mocked(mockAxios.get).mockImplementationOnce(() =>
+      jest.spyOn(client.instance, 'get').mockImplementationOnce(() =>
         Promise.resolve({
           data,
         })
       );
 
-      const result = await client.get('/user', {}, yup.mixed());
+      const result = await client.get('/user', {}, UserListSchema);
 
       expect(result).toEqual(data);
     });
 
-    it('should throw validation error if invalid type', async () => {
-      mocked(mockAxios.get).mockImplementationOnce(() =>
+    it('should throw ValidationError', async () => {
+      jest.spyOn(client.instance, 'get').mockImplementationOnce(() =>
         Promise.resolve({
           data: { test: 'error' },
         })
       );
 
-      const result = client.get('/user', {}, yup.array().of(yup.string()));
+      const result = client.get('/user', {}, UserListSchema);
 
       await expect(result).rejects.toThrow(ValidationError);
+    });
+
+    it('should throw TypeError', async () => {
+      jest
+        .spyOn(client.instance, 'get')
+        .mockImplementationOnce(() => Promise.resolve(null));
+
+      const result = client.get('/user', {}, UserListSchema);
+
+      await expect(result).rejects.toThrow(TypeError);
     });
   });
 
@@ -100,27 +116,59 @@ describe('HTTP Library', () => {
     it('should process response data successfully', async () => {
       const data = user;
 
-      mocked(mockAxios.put).mockImplementationOnce(() =>
+      jest.spyOn(client.instance, 'put').mockImplementationOnce(() =>
         Promise.resolve({
           data,
         })
       );
 
-      const result = await client.put('/user', data, yup.mixed());
+      const result = await client.put('/user/1', data, UserSchema);
 
       expect(result).toEqual(data);
     });
 
-    it('should throw validation error if invalid type', async () => {
-      mocked(mockAxios.put).mockImplementationOnce(() =>
+    it('should process FormData request successfully', async () => {
+      const data = user;
+
+      jest.spyOn(client.instance, 'put').mockImplementationOnce(() =>
+        Promise.resolve({
+          data,
+        })
+      );
+
+      const formData = new FormData();
+
+      Object.entries(data).map(([key, value]) => {
+        if (isString(value)) {
+          formData.append(key, value);
+        }
+      });
+
+      const result = await client.put('/user/1', formData, UserSchema);
+
+      expect(result).toEqual(data);
+    });
+
+    it('should throw ValidationError', async () => {
+      jest.spyOn(client.instance, 'put').mockImplementationOnce(() =>
         Promise.resolve({
           data: { test: 'error' },
         })
       );
 
-      const result = client.put('/user', {}, yup.array().of(yup.string()));
+      const result = client.put('/user/1', {}, UserSchema);
 
       await expect(result).rejects.toThrow(ValidationError);
+    });
+
+    it('should throw TypeError', async () => {
+      jest
+        .spyOn(client.instance, 'put')
+        .mockImplementationOnce(() => Promise.resolve(null));
+
+      const result = client.put('/user/1', {}, UserSchema);
+
+      await expect(result).rejects.toThrow(TypeError);
     });
   });
 
@@ -128,27 +176,37 @@ describe('HTTP Library', () => {
     it('should process response data successfully', async () => {
       const data = user;
 
-      mocked(mockAxios.delete).mockImplementationOnce(() =>
+      jest.spyOn(client.instance, 'delete').mockImplementationOnce(() =>
         Promise.resolve({
           data,
         })
       );
 
-      const result = await client.delete('/user/1', yup.mixed());
+      const result = await client.delete('/user/1', UserSchema);
 
       expect(result).toEqual(data);
     });
 
-    it('should throw validation error if invalid type', async () => {
-      mocked(mockAxios.delete).mockImplementationOnce(() =>
+    it('should throw ValidationError', async () => {
+      jest.spyOn(client.instance, 'delete').mockImplementationOnce(() =>
         Promise.resolve({
           data: { test: 'error' },
         })
       );
 
-      const result = client.delete('/user', yup.array().of(yup.string()));
+      const result = client.delete('/user/1', UserSchema);
 
       await expect(result).rejects.toThrow(ValidationError);
+    });
+
+    it('should throw TypeError', async () => {
+      jest
+        .spyOn(client.instance, 'delete')
+        .mockImplementationOnce(() => Promise.resolve(null));
+
+      const result = client.delete('/user/1', UserSchema);
+
+      await expect(result).rejects.toThrow(TypeError);
     });
   });
 });

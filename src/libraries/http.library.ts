@@ -19,7 +19,18 @@ export const httpClient = () => {
     baseURL,
   });
 
+  xhr.interceptors.response.use(
+    (response) => {
+      return response;
+    },
+    (error) => {
+      return Promise.reject(error.response);
+    }
+  );
+
   return {
+    instance: xhr,
+
     post: async <D, S extends Schema<any>>(
       url: string,
       data: D,

@@ -6,13 +6,13 @@
   },
   "plugins": ["@typescript-eslint", "react", "jest", "promise", "react-hooks"],
   "extends": [
+    "airbnb-typescript/base",
+    "airbnb/hooks",
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
     "plugin:eslint-comments/recommended",
     "plugin:jest/recommended",
     "plugin:promise/recommended",
-    "airbnb-typescript/base",
-    "airbnb/hooks",
     "plugin:@typescript-eslint/recommended-requiring-type-checking"
   ],
   "parserOptions": {
@@ -42,14 +42,32 @@
     "@typescript-eslint/no-explicit-any": 0,
     "@typescript-eslint/camelcase": 0,
     "@typescript-eslint/explicit-module-boundary-types": 0,
-    "@typescript-eslint/naming-convention": 0,
+    "@typescript-eslint/naming-convention": [
+      "error",
+      {
+        "selector": "variable",
+        "format": ["PascalCase", "camelCase", "UPPER_CASE"]
+      },
+      {
+        "selector": "typeLike",
+        "format": ["PascalCase", "UPPER_CASE"]
+      },
+      {
+        "selector": "interface",
+        "format": ["PascalCase"],
+        "custom": {
+          "regex": "^I[A-Z]",
+          "match": true
+        }
+      }
+    ],
     "@typescript-eslint/no-unsafe-assignment": 0,
     "@typescript-eslint/no-unsafe-member-access": 0,
     "@typescript-eslint/no-unsafe-return": 0,
     "@typescript-eslint/restrict-template-expressions": 0,
     "@typescript-eslint/no-floating-promises": 0,
     "@typescript-eslint/no-unsafe-call": 0, // Temporarily disabled
-    "@typescript-eslint/await-thenable": 0,
+    "@typescript-eslint/await-thenable": 0, // For unit testing act
     "@typescript-eslint/indent": 0,
     "@typescript-eslint/no-unnecessary-type-assertion": 1,
     "@typescript-eslint/unbound-method": 0, // Having issue with unit test mocked axios
@@ -66,7 +84,6 @@
     "default-case": 0,
     "no-plusplus": 0,
     "arrow-body-style": 0,
-    "import/no-cycle": 0, // Temporarily disabled
     "linebreak-style": [0, "error", "windows"],
     "import/extensions": 0,
     "array-callback-return": 0,
