@@ -68,7 +68,19 @@ describe('HTTP Library', () => {
         .spyOn(client.instance, 'post')
         .mockImplementationOnce(() => Promise.resolve(null));
 
-      const result = client.post('/user', {}, UserSchema);
+      const result = client.post(
+        '/user',
+        {},
+        UserSchema,
+        {
+          headers: {
+            Autorization: 'Bearer Test',
+          },
+        },
+        {
+          strict: true,
+        }
+      );
 
       await expect(result).rejects.toThrow(TypeError);
     });
@@ -106,7 +118,19 @@ describe('HTTP Library', () => {
         .spyOn(client.instance, 'get')
         .mockImplementationOnce(() => Promise.resolve(null));
 
-      const result = client.get('/user', {}, UserListSchema);
+      const result = client.get(
+        '/user',
+        {},
+        UserListSchema,
+        {
+          headers: {
+            Autorization: 'Bearer Test',
+          },
+        },
+        {
+          strict: true,
+        }
+      );
 
       await expect(result).rejects.toThrow(TypeError);
     });
@@ -166,7 +190,19 @@ describe('HTTP Library', () => {
         .spyOn(client.instance, 'put')
         .mockImplementationOnce(() => Promise.resolve(null));
 
-      const result = client.put('/user/1', {}, UserSchema);
+      const result = client.put(
+        '/user/1',
+        {},
+        UserSchema,
+        {
+          headers: {
+            Autorization: 'Bearer Test',
+          },
+        },
+        {
+          strict: true,
+        }
+      );
 
       await expect(result).rejects.toThrow(TypeError);
     });
@@ -204,7 +240,18 @@ describe('HTTP Library', () => {
         .spyOn(client.instance, 'delete')
         .mockImplementationOnce(() => Promise.resolve(null));
 
-      const result = client.delete('/user/1', UserSchema);
+      const result = client.delete(
+        '/user/1',
+        UserSchema,
+        {
+          headers: {
+            Autorization: 'Bearer Test',
+          },
+        },
+        {
+          strict: true,
+        }
+      );
 
       await expect(result).rejects.toThrow(TypeError);
     });

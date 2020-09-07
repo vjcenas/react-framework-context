@@ -4,6 +4,7 @@ import { Schema, InferType, ValidateOptions } from 'yup';
 export const httpClient = () => {
   const baseURL = process.env.REACT_APP_API_ENDPOINT;
 
+  /* istanbul ignore next */
   const xhr = Axios.create({
     headers: { 'Content-Type': 'application/json' },
     transformRequest: [
@@ -19,6 +20,7 @@ export const httpClient = () => {
     baseURL,
   });
 
+  /* istanbul ignore next */
   xhr.interceptors.response.use(
     (response) => {
       return response;
