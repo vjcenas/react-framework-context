@@ -1,7 +1,7 @@
 import { useReducer, useMemo, useCallback, useRef } from 'react';
 import { TYPE_FETCHING, TYPE_FETCHED, TYPE_ERROR } from '../constants';
 import thunkFactory, {
-  IThunkActionReturn,
+  IAsyncActionReturn,
   ISyncActionReturn,
 } from '../libraries/thunk.library';
 import useReducerLogger from './reducer-logger.hook';
@@ -19,7 +19,7 @@ function useReducerHook<S = IUserState>(
   actions: IUserAsync & IUserSync
 ): {
   state: S;
-  actions: IThunkActionReturn<IUserAsync> & ISyncActionReturn<IUserSync>;
+  actions: IAsyncActionReturn<IUserAsync> & ISyncActionReturn<IUserSync>;
 };
 
 function useReducerHook(reducer, defaultState, actionList) {

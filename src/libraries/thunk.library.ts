@@ -4,30 +4,31 @@ import { IReturnPromise, ICustomAction } from 'src/ducks';
 
 export const thunkCreator = async <C extends string, T>(
   actionType: C,
-  service,
+  service: (dispatch: Dispatch<any>) => Promise<T>,
   dispatch: Dispatch<any>
 ) => {
   dispatch({
     type: actionType,
     status: TYPE_FETCHING,
   });
+
   try {
-    const res = await service(dispatch);
+    const response = await service(dispatch);
     dispatch({
       type: actionType,
       status: TYPE_FETCHED,
-      payload: res as T,
+      payload: response,
     });
 
-    return { payload: res as T };
+    return { payload: response };
   } catch (error) {
     dispatch({
       type: actionType,
       status: TYPE_ERROR,
-      payload: error,
+      payload: error.data || error,
     });
 
-    return { error };
+    return { error: error.data || error };
   }
 };
 
@@ -35,21 +36,26 @@ type IThunkReturn<T> =
   | { payload: T; error?: never }
   | { payload?: never; error: any };
 
-export type IAsyncThunk = Record<
+type IMeta = {
+  error?: boolean | ((error) => string);
+};
+
+type IAsyncThunk = Record<
   string,
   {
     type: string;
     service: (...args: any[]) => any;
+    meta?: IMeta;
   }
 >;
 
-export type IThunkActionReturn<T extends IAsyncThunk> = {
+export type IAsyncActionReturn<T extends IAsyncThunk> = {
   [K in keyof T]: (
     ...args: Parameters<T[K]['service']>
   ) => Promise<IThunkReturn<IReturnPromise<ReturnType<T[K]['service']>>>>;
 };
 
-export type ISyncThunk = Record<
+type ISyncThunk = Record<
   string,
   (
     ...args: any[]
@@ -60,7 +66,7 @@ export type ISyncThunk = Record<
 >;
 
 export type ISyncActionReturn<T extends ISyncThunk> = {
-  [k in keyof T]: (...args: Parameters<T[k]>) => ReturnType<T[k]>;
+  [K in keyof T]: (...args: Parameters<T[K]>) => ReturnType<T[K]>;
 };
 
 export type IAsyncActions<T extends IAsyncThunk> = {
@@ -77,22 +83,45 @@ export type ISyncActions<T extends ISyncThunk> = {
   >;
 }[keyof T];
 
+type IHybridThunk = Record<string, IAsyncThunk[string] | ISyncThunk[string]>;
+
+export type IHybridActionReturn<T> = {
+  [K in keyof T]: T[K] extends IAsyncThunk[string]
+    ? (
+        ...args: Parameters<T[K]['service']>
+      ) => Promise<IThunkReturn<IReturnPromise<ReturnType<T[K]['service']>>>>
+    : T[K] extends ISyncThunk[string]
+    ? (...args: Parameters<T[K]>) => ReturnType<T[K]>
+    : never;
+};
+
 type IReturnActions<T> = T extends IAsyncThunk
-  ? IThunkActionReturn<T>
+  ? IAsyncActionReturn<T>
   : T extends ISyncThunk
   ? ISyncActionReturn<T>
-  : never;
+  : IHybridActionReturn<T>;
 
-function thunkFactory<T extends IAsyncThunk & ISyncThunk>(
-  actions: T,
-  dispatch: Dispatch<any>
-) {
+interface IThunkFactory {
+  <T extends IHybridThunk>(actions: T, dispatch: Dispatch<any>): IReturnActions<
+    T
+  >;
+
+  <T extends IAsyncThunk>(actions: T, dispatch: Dispatch<any>): IReturnActions<
+    T
+  >;
+
+  <T extends ISyncThunk>(actions: T, dispatch: Dispatch<any>): IReturnActions<
+    T
+  >;
+}
+
+const thunkFactory: IThunkFactory = (actions, dispatch) => {
   return Object.keys(actions).reduce((thunks, key: keyof typeof actions) => {
     const action = actions[key];
 
     return {
       ...thunks,
-      [key]: async (...args) => {
+      [key]: (...args) => {
         if (typeof action === 'function') {
           return dispatch(action(...args));
         }
@@ -103,7 +132,7 @@ function thunkFactory<T extends IAsyncThunk & ISyncThunk>(
         );
       },
     };
-  }, {}) as IReturnActions<T>;
-}
+  }, {});
+};
 
 export default thunkFactory;
