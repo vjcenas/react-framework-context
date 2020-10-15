@@ -22,13 +22,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - name: Install dependencies
-        run: yarn --frozen-lockfile
-      - name: Build
-      - run: yarn build --if-present
-      - name: Test
+      - run: yarn --frozen-lockfile
+      - run: yarn build
       - run: yarn test:pipeline
-      - name: Lint
       - run: yarn lint
         env:
           CI: true
