@@ -6,7 +6,9 @@ type IProps = React.DetailedHTMLProps<
 >;
 
 const Button: React.FC<IProps> = ({ children, ...props }) => (
-  <button {...props}>{children}</button>
+  <button type="button" {...props}>
+    {children}
+  </button>
 );
 
 export default Button;

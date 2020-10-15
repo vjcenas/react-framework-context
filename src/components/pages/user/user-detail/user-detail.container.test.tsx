@@ -41,7 +41,7 @@ describe('UserContainer', () => {
 
   it('should display data', async () => {
     const data = userMock();
-    let wrapper = mount(<React.Fragment />);
+    let wrapper = mount(<div />);
 
     jest
       .spyOn(asyncActions.dataGET, 'service')
@@ -69,7 +69,7 @@ describe('UserContainer', () => {
 
   it('should call addAge', async () => {
     const data = userMock();
-    let wrapper = mount(<React.Fragment />);
+    let wrapper = mount(<div />);
 
     const sevice = jest
       .spyOn(asyncActions.dataGET, 'service')

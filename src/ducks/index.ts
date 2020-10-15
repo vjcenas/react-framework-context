@@ -18,8 +18,8 @@ export type ICommonState<T> = { status: IThunkStatus<T> };
 export type ICommonAction<T> = T;
 
 export type IAsyncAction<C, T> =
-  | ICustomAction<C, never, TYPE_FETCHING>
-  | ICustomAction<C, T, TYPE_FETCHED>
-  | ICustomAction<C, Error, TYPE_ERROR>;
+  | ICustomAction<C, never, typeof TYPE_FETCHING>
+  | ICustomAction<C, T, typeof TYPE_FETCHED>
+  | ICustomAction<C, Error, typeof TYPE_ERROR>;
 
 export type IReturnPromise<T> = T extends Promise<infer U> ? U : T;

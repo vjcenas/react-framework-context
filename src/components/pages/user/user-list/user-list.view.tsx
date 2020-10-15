@@ -18,8 +18,8 @@ const UserListView: React.FC<IProps> = ({ data }) => {
           </tr>
         </thead>
         <tbody>
-          {data.map((user, key) => (
-            <tr key={key}>
+          {data.map((user) => (
+            <tr key={user.id}>
               <td>
                 <Link to={`/users/${user.id}`}>{user.name}</Link>
               </td>

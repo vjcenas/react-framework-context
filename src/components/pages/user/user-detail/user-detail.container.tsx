@@ -7,8 +7,8 @@ type IProps = RouteComponentProps<{
   id: string;
 }>;
 
-const UserDetailContainer: React.FC<IProps> = (props) => {
-  const userId = Number(props.match.params.id);
+const UserDetailContainer: React.FC<IProps> = ({ match }) => {
+  const userId = Number(match.params.id);
   const { state, actions } = useUserContext();
 
   useEffect(() => {

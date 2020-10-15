@@ -29,7 +29,7 @@ describe('UserContainer', () => {
   it('should display data', async () => {
     const data: IUser[] = new Array(5).fill(null).map(() => userMock());
 
-    let wrapper = mount(<React.Fragment />);
+    let wrapper = mount(<div />);
 
     mocked(asyncActions.listGET.service).mockImplementationOnce(() =>
       Promise.resolve(data)
