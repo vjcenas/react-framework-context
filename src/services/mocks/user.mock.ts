@@ -10,7 +10,7 @@ export const userMock = (): IUser => {
     address: {
       city: faker.address.city(),
       street: faker.address.streetAddress(),
-      zipcode: 4000,
+      zipcode: faker.address.zipCode(),
       geo: {
         lat: faker.address.latitude(),
         lng: faker.address.longitude(),

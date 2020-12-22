@@ -5,7 +5,7 @@ const useReducerLogger = (reducer) =>
     (state, action) => {
       const next = reducer(state, action);
 
-      if (process.env.NODE_ENV === 'production') {
+      if (process.env.NODE_ENV !== 'production') {
         // eslint-disable-next-line no-console
         console.log(
           '%cPrevious State:',

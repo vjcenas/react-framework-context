@@ -11,7 +11,7 @@ export const UserSchema = yup
       .object({
         street: yup.string(),
         city: yup.string(),
-        zipcode: yup.number(),
+        zipcode: yup.string(),
         geo: yup
           .object({
             lat: yup.string(),
