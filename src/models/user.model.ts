@@ -2,17 +2,16 @@ import yup from 'src/libraries/validator.library';
 
 export const UserSchema = yup
   .object({
-    id: yup.number(),
+    id: yup.number().required(),
     name: yup.string(),
-    username: yup.string(),
+    username: yup.string().nullable(),
     email: yup.string(),
     age: yup.number().default(0),
     address: yup
       .object({
         street: yup.string(),
-        suite: yup.string(),
         city: yup.string(),
-        zipcode: yup.string(),
+        zipcode: yup.number(),
         geo: yup
           .object({
             lat: yup.string(),
@@ -33,6 +32,6 @@ export const UserSchema = yup
   })
   .defined();
 
-export const UserListSchema = yup.array().of(UserSchema).defined();
+export const UserListSchema = yup.array().of(UserSchema.clone());
 
 export type IUser = yup.InferType<typeof UserSchema>;

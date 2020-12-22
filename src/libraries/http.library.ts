@@ -1,5 +1,6 @@
 import Axios, { AxiosRequestConfig } from 'axios';
-import { Schema, InferType, ValidateOptions } from 'yup';
+import { InferType, SchemaOf } from 'yup';
+import { ValidateOptions } from 'yup/lib/types';
 
 export const httpClient = () => {
   const baseURL = process.env.REACT_APP_API_ENDPOINT;
@@ -33,12 +34,12 @@ export const httpClient = () => {
   return {
     instance: xhr,
 
-    post: async <D, S extends Schema<any>>(
+    post: async <D, S extends SchemaOf<any>, C>(
       url: string,
       data: D,
       schema: S,
       axiosConfig: AxiosRequestConfig = {},
-      validateConfig: ValidateOptions = {}
+      validateConfig: ValidateOptions<C> = {}
     ): Promise<InferType<S>> => {
       const response = await xhr.post(url, data, axiosConfig);
 
@@ -49,12 +50,12 @@ export const httpClient = () => {
       });
     },
 
-    get: async <D, S extends Schema<any>>(
+    get: async <D, S extends SchemaOf<any>, C>(
       url: string,
       data: D,
       schema: S,
       axiosConfig: AxiosRequestConfig = {},
-      validateConfig: ValidateOptions = {}
+      validateConfig: ValidateOptions<C> = {}
     ): Promise<InferType<S>> => {
       const response = await xhr.get(url, { ...axiosConfig, params: data });
 
@@ -65,12 +66,12 @@ export const httpClient = () => {
       });
     },
 
-    put: async <D, S extends Schema<any>>(
+    put: async <D, S extends SchemaOf<any>, C>(
       url: string,
       data: D,
       schema: S,
       axiosConfig: AxiosRequestConfig = {},
-      validateConfig: ValidateOptions = {}
+      validateConfig: ValidateOptions<C> = {}
     ): Promise<InferType<S>> => {
       const response = await xhr.put(url, data, axiosConfig);
 
@@ -81,11 +82,11 @@ export const httpClient = () => {
       });
     },
 
-    delete: async <S extends Schema<any>>(
+    delete: async <S extends SchemaOf<any>, C>(
       url: string,
       schema: S,
       axiosConfig: AxiosRequestConfig = {},
-      validateConfig: ValidateOptions = {}
+      validateConfig: ValidateOptions<C> = {}
     ): Promise<InferType<S>> => {
       const response = await xhr.delete(url, axiosConfig);
 

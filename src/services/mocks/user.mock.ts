@@ -4,9 +4,13 @@ import { IUser } from 'src/models/user.model';
 export const userMock = (): IUser => {
   return {
     id: faker.random.number(),
-    name: 'test',
+    name: faker.name.findName(),
     username: faker.internet.userName(),
+    age: faker.random.number(),
     address: {
+      city: faker.address.city(),
+      street: faker.address.streetAddress(),
+      zipcode: 4000,
       geo: {
         lat: faker.address.latitude(),
         lng: faker.address.longitude(),

@@ -5,7 +5,6 @@ import { mount } from 'enzyme';
 import { UserProvider } from 'src/contexts';
 import { IUser } from 'src/models/user.model';
 import { userMock } from 'src/services/mocks/user.mock';
-import { mocked } from 'ts-jest/utils';
 import { MemoryRouter } from 'react-router-dom';
 import UserListContainer from './user-list.container';
 
@@ -29,11 +28,11 @@ describe('UserContainer', () => {
   it('should display data', async () => {
     const data: IUser[] = new Array(5).fill(null).map(() => userMock());
 
-    let wrapper = mount(<div />);
+    let wrapper;
 
-    mocked(asyncActions.listGET.service).mockImplementationOnce(() =>
-      Promise.resolve(data)
-    );
+    jest
+      .spyOn(asyncActions.listGET, 'service')
+      .mockImplementationOnce(() => Promise.resolve(data));
 
     await act(async () => {
       wrapper = await mount(
