@@ -1,5 +1,5 @@
 import { UserSchema, UserListSchema } from 'src/models/user.model';
-import { httpClient } from '../libraries/http.library';
+import { httpClient } from 'src/libraries/http.library';
 
 const client = httpClient();
 

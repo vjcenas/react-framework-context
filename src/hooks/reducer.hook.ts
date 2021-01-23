@@ -1,28 +1,23 @@
 import { useReducer, useMemo, useCallback, useRef } from 'react';
-import { TYPE_FETCHING, TYPE_FETCHED, TYPE_ERROR } from '../constants';
+import { TYPE_FETCHING, TYPE_FETCHED, TYPE_ERROR } from 'src/constants';
 import thunkFactory, {
-  IAsyncActionReturn,
-  ISyncActionReturn,
-} from '../libraries/thunk.library';
-import useReducerLogger from './reducer-logger.hook';
-import UserReducer, {
-  IUserState,
-  IUserAsync,
-  IUserSync,
-} from '../ducks/user.duck';
+  IReducerAction,
+  IReturnActions,
+} from 'src/libraries/thunk.library';
+import useReducerLogger from 'src/hooks/reducer-logger.hook';
 
-// Overloading TypeScript Functions for useReducerHook this means that
-// every Reducer created must also create a overloading function here
-function useReducerHook<S = IUserState>(
-  reducer: typeof UserReducer,
+const useReducerHook = <
+  R extends (state: S, action: IReducerAction<A>) => S,
+  S,
+  A
+>(
+  reducer: R,
   defaultState: S,
-  actions: IUserAsync & IUserSync
+  actionList: A
 ): {
   state: S;
-  actions: IAsyncActionReturn<IUserAsync> & ISyncActionReturn<IUserSync>;
-};
-
-function useReducerHook(reducer, defaultState, actionList) {
+  actions: IReturnActions<A>;
+} => {
   // Memoized actions
   const actionsRef = useRef(actionList);
 
@@ -92,6 +87,6 @@ function useReducerHook(reducer, defaultState, actionList) {
   ]);
 
   return { state, actions };
-}
+};
 
 export default useReducerHook;

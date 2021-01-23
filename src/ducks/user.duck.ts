@@ -1,7 +1,6 @@
-import services from '../services/user.service';
-import { IUser } from '../models/user.model';
-import { IAsyncActions, ISyncActions } from '../libraries/thunk.library';
-import { ICommonAction, ICommonState } from '.';
+import services from 'src/services/user.service';
+import { IUser } from 'src/models/user.model';
+import { ICommonState, IReducerAction } from 'src/libraries/thunk.library';
 
 export const actionTypes = {
   USER_DATA_FETCH: 'USER_DATA_FETCH',
@@ -21,26 +20,18 @@ export const asyncActions = {
   },
 };
 
-export type IUserAsync = typeof asyncActions;
-
 // This is where we put the actions that doesn't have any promise/async payload
 export const syncActions = {
-  addAge: (age) => ({
+  addAge: (age: number) => ({
     type: actionTypes.USER_ADD_AGE,
     payload: age,
   }),
 };
 
-export type IUserSync = typeof syncActions;
-
-export type IUserAsyncReducerAction =
-  | IAsyncActions<IUserAsync>
-  | ISyncActions<IUserSync>;
-
-export interface IUserState extends ICommonState<IUserAsyncReducerAction> {
+export type IUserState = ICommonState<typeof actionTypes> & {
   data?: IUser;
   list: IUser[];
-}
+};
 
 export const defaultState: IUserState = {
   status: {},
@@ -48,8 +39,8 @@ export const defaultState: IUserState = {
 };
 
 const UserReducer = (
-  state: IUserState = defaultState,
-  action: ICommonAction<IUserAsyncReducerAction>
+  state = defaultState,
+  action: IReducerAction<typeof asyncActions & typeof syncActions>
 ): IUserState => {
   switch (action.type) {
     case actionTypes.USER_DATA_FETCH: {
@@ -63,6 +54,16 @@ const UserReducer = (
       return {
         ...state,
         list: action.payload ?? [],
+      };
+    }
+
+    case actionTypes.USER_ADD_AGE: {
+      return {
+        ...state,
+        data: {
+          ...(state.data as IUser),
+          age: Number(state.data?.age ?? 0) + Number(action.payload),
+        },
       };
     }
 

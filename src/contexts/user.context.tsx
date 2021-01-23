@@ -4,7 +4,7 @@ import UserReducer, {
   defaultState,
   asyncActions,
   syncActions,
-} from '../ducks/user.duck';
+} from 'src/ducks/user.duck';
 
 // We need to do this, to be able to get the typings of the Reducer
 const Reducer = () => {

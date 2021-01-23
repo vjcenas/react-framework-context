@@ -1,8 +1,8 @@
 import axios from 'axios';
 import { ValidationError } from 'yup';
-import { IUser } from '../../models/user.model';
+import { userMock } from 'src/models/mocks/user.mock';
+import { IUser } from 'src/models/user.model';
 import services from '../user.service';
-import { userMock } from '../mocks/user.mock';
 
 const mockAxios = axios.create();
 

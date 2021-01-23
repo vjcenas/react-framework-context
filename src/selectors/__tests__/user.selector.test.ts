@@ -1,24 +1,16 @@
-import { getFullnames } from '../user.selector';
+import { userMock } from 'src/models/mocks/user.mock';
+import { IUser } from 'src/models/user.model';
+import { getDisplayName } from '../user.selector';
 
 describe('User Selector', () => {
   it('should return an array of fullname', () => {
-    const data = [
-      {
-        first_name: 'Juan',
-        last_name: 'Dela Cruz',
-        birth_date: '2000-12-12',
-        country: 'Philippines',
-      },
-      {
-        first_name: 'Jane',
-        last_name: 'Doe',
-        birth_date: '2005-11-11',
-        country: 'USA',
-      },
-    ];
+    const data: IUser[] = Array(2).fill(null).map(userMock);
 
-    const result = getFullnames(data);
+    const result = getDisplayName(data);
 
-    expect(result).toEqual(['Juan Dela Cruz', 'Jane Doe']);
+    expect(result).toEqual([
+      `${data[0].name} (${data[0].username})`,
+      `${data[1].name} (${data[1].username})`,
+    ]);
   });
 });

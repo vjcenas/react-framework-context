@@ -4,7 +4,7 @@ import { act } from 'react-dom/test-utils';
 import { mount } from 'enzyme';
 import { UserProvider } from 'src/contexts';
 import { IUser } from 'src/models/user.model';
-import { userMock } from 'src/services/mocks/user.mock';
+import { userMock } from 'src/models/mocks/user.mock';
 import { MemoryRouter } from 'react-router-dom';
 import UserListContainer from './user-list.container';
 

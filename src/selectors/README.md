@@ -5,38 +5,35 @@ A selector is a small function you write that can take the entire data, and pick
 This can also be very helpful for unit testing.
 
 ## Example
+
 ```js
 // Fetched data from the server
 const responseData = [
-    {
-        first_name: "Juan",
-        last_name: "Dela Cruz",
-        birth_date: "2000-12-12",
-        country: "Philippines"
-    },
-    {
-        first_name: "Jane",
-        last_name: "Doe",
-        birth_date: "2005-11-11",
-        country: "USA"
-    }
-]
+  {
+    name: 'Juan Dela Cruz',
+    username: 'jCruz',
+    birth_date: '2000-12-12',
+    country: 'Philippines',
+  },
+  {
+    name: 'Jane Doe',
+    username: 'jDoe',
+    birth_date: '2005-11-11',
+    country: 'USA',
+  },
+];
 
 // user.selector.ts
-const getFullnames = (data) => {
-    return data.map((value) => {
-        return `${value.first_name} ${value.last_name}`;
-    });
-}
+export const getDisplayName = (data: IUser[]): string[] =>
+  data.map((value) => `${value.name} (${value.username})`);
 
-
-console.log(getFullnames(responseData))
+console.log(getDisplayName(responseData));
 /* 
 [
-    "Juan Dela Cruz",
-    "Jane Doe"
+    "Juan Dela Cruz (jCruz)",
+    "Jane Doe (jDoe)"
 ]
 */
 ```
 
-Now we can reuse  the **getFullname** function anywhere on the app.
+Now we can reuse the **getFullname** function anywhere on the app.

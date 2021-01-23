@@ -1,12 +1,38 @@
 import { Dispatch } from 'react';
 import { TYPE_FETCHING, TYPE_ERROR, TYPE_FETCHED } from 'src/constants';
-import { IReturnPromise, ICustomAction } from 'src/ducks';
 
-export const thunkCreator = async <C extends string, T>(
-  actionType: C,
-  service: (dispatch: Dispatch<any>) => Promise<T>,
-  dispatch: Dispatch<any>
-) => {
+type IStatus = {
+  error: any;
+  fetching: boolean;
+};
+
+type ICustomAction<T, P = never, S = never> = {
+  type: T;
+  payload: P;
+  status: S;
+};
+
+export type ICommonState<T> = {
+  status: {
+    [K in keyof T]?: IStatus;
+  };
+};
+
+type IReturnPromise<T> = T extends Promise<infer U> ? U : T;
+
+type IThunkReturn<T> =
+  | { payload: T; error?: never }
+  | { payload?: never; error: any };
+
+export const thunkCreator = async <
+  A extends string,
+  T,
+  D extends Dispatch<any>
+>(
+  actionType: A,
+  service: (dispatch: D) => Promise<T>,
+  dispatch: D
+): Promise<IThunkReturn<T>> => {
   dispatch({
     type: actionType,
     status: TYPE_FETCHING,
@@ -32,15 +58,11 @@ export const thunkCreator = async <C extends string, T>(
   }
 };
 
-type IThunkReturn<T> =
-  | { payload: T; error?: never }
-  | { payload?: never; error: any };
-
 type IMeta = {
   error?: boolean | ((error) => string);
 };
 
-type IAsyncThunk = Record<
+export type IAsyncThunk = Record<
   string,
   {
     type: string;
@@ -49,13 +71,18 @@ type IAsyncThunk = Record<
   }
 >;
 
-export type IAsyncActionReturn<T extends IAsyncThunk> = {
+type IAsyncAction<T extends IAsyncThunk[string]> = ICustomAction<
+  T['type'],
+  IReturnPromise<ReturnType<T['service']>>
+>;
+
+type IAsyncActionReturn<T extends IAsyncThunk> = {
   [K in keyof T]: (
     ...args: Parameters<T[K]['service']>
   ) => Promise<IThunkReturn<IReturnPromise<ReturnType<T[K]['service']>>>>;
 };
 
-type ISyncThunk = Record<
+export type ISyncThunk = Record<
   string,
   (
     ...args: any[]
@@ -65,27 +92,25 @@ type ISyncThunk = Record<
   }
 >;
 
-export type ISyncActionReturn<T extends ISyncThunk> = {
+type ISyncAction<T extends ISyncThunk[string]> = ICustomAction<
+  ReturnType<T>['type'],
+  ReturnType<T>['payload']
+>;
+
+type ISyncActionReturn<T extends ISyncThunk> = {
   [K in keyof T]: (...args: Parameters<T[K]>) => ReturnType<T[K]>;
 };
 
-export type IAsyncActions<T extends IAsyncThunk> = {
-  [key in keyof T]: ICustomAction<
-    T[key]['type'],
-    IReturnPromise<ReturnType<T[key]['service']>>
-  >;
+// This will auto create reducer actions response
+export type IReducerAction<T> = {
+  [K in keyof T]: T[K] extends IAsyncThunk[string]
+    ? IAsyncAction<T[K]>
+    : T[K] extends ISyncThunk[string]
+    ? ISyncAction<T[K]>
+    : IAsyncAction<IAsyncThunk[string]> & ISyncAction<ISyncThunk[string]>;
 }[keyof T];
 
-export type ISyncActions<T extends ISyncThunk> = {
-  [key in keyof T]: ICustomAction<
-    ReturnType<T[key]>['type'],
-    ReturnType<T[key]>['payload']
-  >;
-}[keyof T];
-
-type IHybridThunk = Record<string, IAsyncThunk[string] | ISyncThunk[string]>;
-
-export type IHybridActionReturn<T> = {
+type IHybridActionReturn<T> = {
   [K in keyof T]: T[K] extends IAsyncThunk[string]
     ? (
         ...args: Parameters<T[K]['service']>
@@ -95,28 +120,14 @@ export type IHybridActionReturn<T> = {
     : never;
 };
 
-type IReturnActions<T> = T extends IAsyncThunk
+export type IReturnActions<T> = T extends IAsyncThunk
   ? IAsyncActionReturn<T>
   : T extends ISyncThunk
   ? ISyncActionReturn<T>
   : IHybridActionReturn<T>;
 
-interface IThunkFactory {
-  <T extends IHybridThunk>(actions: T, dispatch: Dispatch<any>): IReturnActions<
-    T
-  >;
-
-  <T extends IAsyncThunk>(actions: T, dispatch: Dispatch<any>): IReturnActions<
-    T
-  >;
-
-  <T extends ISyncThunk>(actions: T, dispatch: Dispatch<any>): IReturnActions<
-    T
-  >;
-}
-
-const thunkFactory: IThunkFactory = (actions, dispatch) => {
-  return Object.keys(actions).reduce((thunks, key: keyof typeof actions) => {
+const thunkFactory = <A, R>(actions: A, dispatch: Dispatch<R>) => {
+  return Object.keys(actions).reduce((thunks, key) => {
     const action = actions[key];
 
     return {
@@ -132,7 +143,7 @@ const thunkFactory: IThunkFactory = (actions, dispatch) => {
         );
       },
     };
-  }, {});
+  }, {} as IReturnActions<A>);
 };
 
 export default thunkFactory;

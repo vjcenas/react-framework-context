@@ -27,3 +27,5 @@ yarn-error.log*
 *.module.scss.d.ts
 
 /junit*.xml
+
+debug.log

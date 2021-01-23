@@ -1,10 +1,10 @@
 import React from 'react';
-import { asyncActions } from 'src/ducks/user.duck';
+import { actionTypes, asyncActions, syncActions } from 'src/ducks/user.duck';
 import { act } from 'react-dom/test-utils';
 import { mount } from 'enzyme';
-import { UserProvider } from 'src/contexts';
+import App from 'src/app';
 import history from 'src/history';
-import { userMock } from 'src/services/mocks/user.mock';
+import { userMock } from 'src/models/mocks/user.mock';
 import { MemoryRouter } from 'react-router-dom';
 import UserDetailContainer from './user-detail.container';
 
@@ -25,13 +25,13 @@ describe('UserContainer', () => {
     await act(async () => {
       await mount(
         <MemoryRouter>
-          <UserProvider>
+          <App>
             <UserDetailContainer
               location={history.location}
               history={history}
               match={{ params: { id: '1' }, isExact: true, path: '', url: '' }}
             />
-          </UserProvider>
+          </App>
         </MemoryRouter>
       );
     });
@@ -50,13 +50,13 @@ describe('UserContainer', () => {
     await act(async () => {
       wrapper = await mount(
         <MemoryRouter>
-          <UserProvider>
+          <App>
             <UserDetailContainer
               location={history.location}
               history={history}
               match={{ params: { id: '1' }, isExact: true, path: '', url: '' }}
             />
-          </UserProvider>
+          </App>
         </MemoryRouter>
       );
     });
@@ -67,24 +67,55 @@ describe('UserContainer', () => {
     expect(wrapper.find('h1').text()).toEqual(data.name);
   });
 
-  it('should call addAge', async () => {
+  it('should call dataGET', async () => {
     const data = userMock();
-    let wrapper = mount(<div />);
 
-    const sevice = jest
+    const service = jest
       .spyOn(asyncActions.dataGET, 'service')
       .mockImplementationOnce(() => Promise.resolve(data));
 
     await act(async () => {
-      wrapper = await mount(
+      await mount(
         <MemoryRouter>
-          <UserProvider>
+          <App>
             <UserDetailContainer
               location={history.location}
               history={history}
               match={{ params: { id: '1' }, isExact: true, path: '', url: '' }}
             />
-          </UserProvider>
+          </App>
+        </MemoryRouter>
+      );
+    });
+
+    expect(service).toBeCalledTimes(1);
+  });
+
+  it('should call addAge', async () => {
+    const data = userMock();
+    let wrapper = mount(<div />);
+
+    jest
+      .spyOn(asyncActions.dataGET, 'service')
+      .mockImplementationOnce(() => Promise.resolve(data));
+
+    const addAge = jest
+      .spyOn(syncActions, 'addAge')
+      .mockImplementationOnce(() => ({
+        type: actionTypes.USER_ADD_AGE,
+        payload: 2,
+      }));
+
+    await act(async () => {
+      wrapper = await mount(
+        <MemoryRouter>
+          <App>
+            <UserDetailContainer
+              location={history.location}
+              history={history}
+              match={{ params: { id: '1' }, isExact: true, path: '', url: '' }}
+            />
+          </App>
         </MemoryRouter>
       );
     });
@@ -96,6 +127,6 @@ describe('UserContainer', () => {
       wrapper.find('button').simulate('click');
     });
 
-    expect(sevice).toBeCalledTimes(1);
+    expect(addAge).toBeCalledTimes(1);
   });
 });

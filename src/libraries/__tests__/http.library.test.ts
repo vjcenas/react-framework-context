@@ -1,5 +1,5 @@
 import { IUser, UserSchema, UserListSchema } from 'src/models/user.model';
-import { userMock } from 'src/services/mocks/user.mock';
+import { userMock } from 'src/models/mocks/user.mock';
 import { ValidationError } from 'yup';
 import { httpClient } from '../http.library';
 
@@ -39,7 +39,7 @@ describe('HTTP Library', () => {
 
       const formData = new FormData();
 
-      Object.entries(data).map(([key, value]) => {
+      Object.entries(data).forEach(([key, value]) => {
         if (typeof value === 'string') {
           formData.append(key, value);
         }
@@ -161,7 +161,7 @@ describe('HTTP Library', () => {
 
       const formData = new FormData();
 
-      Object.entries(data).map(([key, value]) => {
+      Object.entries(data).forEach(([key, value]) => {
         if (typeof value === 'string') {
           formData.append(key, value);
         }
