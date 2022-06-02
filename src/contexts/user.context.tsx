@@ -1,36 +1,39 @@
 import React, { createContext, useContext } from 'react';
 import useReducerHook from 'src/hooks/reducer.hook';
 import UserReducer, {
+  IUserState,
   defaultState,
-  asyncActions,
-  syncActions,
+  duckActions,
 } from 'src/ducks/user.duck';
 
-// We need to do this, to be able to get the typings of the Reducer
-const Reducer = () => {
-  return useReducerHook(UserReducer, defaultState, {
-    ...asyncActions,
-    ...syncActions,
-  });
+const useReducer = (state = {}) => {
+  return useReducerHook(
+    UserReducer,
+    {
+      ...defaultState,
+      ...state,
+    },
+    duckActions
+  );
 };
 
-type IUserContext = ReturnType<typeof Reducer>;
+type IUserContext = ReturnType<typeof useReducer>;
 
 const UserContext = createContext<Partial<IUserContext>>({
   state: defaultState,
 }) as React.Context<IUserContext>;
 
-export const UserProvider: React.FC<{ value?: Partial<IUserContext> }> = ({
-  value,
-  children,
-}) => {
-  const reducer = Reducer();
+type IProps = {
+  state?: Partial<IUserState>;
+};
+
+const UserProvider: React.FC<IProps> = ({ children, state }) => {
+  const reducer = useReducer(state);
 
   return (
     <UserContext.Provider
       value={{
         ...reducer,
-        ...value,
       }}
     >
       {children}
@@ -38,10 +41,8 @@ export const UserProvider: React.FC<{ value?: Partial<IUserContext> }> = ({
   );
 };
 
-// We create context hook here so that we can able to unit test
-// container components that uses this context
-export const useUserContext = () => useContext(UserContext);
+const useUserContext = () => useContext(UserContext);
 
 export type IUseUserContext = ReturnType<typeof useUserContext>;
 
-export default UserContext;
+export { UserContext, UserProvider, useUserContext };
