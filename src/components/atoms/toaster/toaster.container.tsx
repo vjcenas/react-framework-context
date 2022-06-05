@@ -1,29 +1,28 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { Message, MessageProps } from 'semantic-ui-react';
-import Lang from 'src/libraries/language';
 import EventManager from 'src/libraries/event.library';
+import Lang from 'src/libraries/languages';
 import styles from './toaster.module.scss';
 
-export enum TOASTER_EVENT {
+export enum ToasterEvent {
   SHOW,
   CLEAR,
 }
 
-const eventManager = new EventManager<TOASTER_EVENT>();
+const eventManager = new EventManager<ToasterEvent>();
 
-export enum TOASTER_TYPE {
+export enum ToasterType {
   SUCCESS,
   WARNING,
   ERROR,
   INFO,
 }
 
-type IToast = MessageProps & {
-  type?: TOASTER_TYPE;
+type IToast = Record<string, any> & {
+  type?: ToasterType;
 };
 
-const Toast = ({ type = TOASTER_TYPE.ERROR, ...params }: IToast) => {
-  eventManager.emit(TOASTER_EVENT.SHOW, {
+const Toast = ({ type = ToasterType.ERROR, ...params }: IToast) => {
+  eventManager.emit(ToasterEvent.SHOW, {
     ...params,
     type,
   });
@@ -32,39 +31,39 @@ const Toast = ({ type = TOASTER_TYPE.ERROR, ...params }: IToast) => {
 type Formatted = number | string | JSX.Element;
 
 const ToastSuccess = (content: Formatted | Formatted[]) => {
-  eventManager.emit(TOASTER_EVENT.SHOW, {
-    type: TOASTER_TYPE.SUCCESS,
+  eventManager.emit(ToasterEvent.SHOW, {
+    type: ToasterType.SUCCESS,
     header: Lang.TTL_TOAST_SUCCESS,
     content,
   });
 };
 
 const ToastError = (content: Formatted | Formatted[]) => {
-  eventManager.emit(TOASTER_EVENT.SHOW, {
-    type: TOASTER_TYPE.ERROR,
+  eventManager.emit(ToasterEvent.SHOW, {
+    type: ToasterType.ERROR,
     header: Lang.TTL_TOAST_ERROR,
     content,
   });
 };
 
 const ToastInfo = (content: Formatted | Formatted[]) => {
-  eventManager.emit(TOASTER_EVENT.SHOW, {
-    type: TOASTER_TYPE.INFO,
+  eventManager.emit(ToasterEvent.SHOW, {
+    type: ToasterType.INFO,
     header: Lang.TTL_TOAST_INFO,
     content,
   });
 };
 
 const ToastWarning = (content: Formatted | Formatted[]) => {
-  eventManager.emit(TOASTER_EVENT.SHOW, {
-    type: TOASTER_TYPE.WARNING,
+  eventManager.emit(ToasterEvent.SHOW, {
+    type: ToasterType.WARNING,
     header: Lang.TTL_TOAST_WARNING,
     content,
   });
 };
 
 const ToastClear = () => {
-  eventManager.emit(TOASTER_EVENT.CLEAR);
+  eventManager.emit(ToasterEvent.CLEAR);
 };
 
 export { Toast, ToastSuccess, ToastError, ToastInfo, ToastWarning, ToastClear };
@@ -82,7 +81,7 @@ const ToasterContainer: React.FC<IProps> = ({ delay = 5000 }) => {
   const [toasts, setToasts] = useState<IToastList>({});
   const [shown, setShown] = useState<string[]>([]);
   const toastRef = useRef(toasts);
-  // Always set the toastRef with the currect values
+  // Always set the toastRef with the current values
   toastRef.current = toasts;
 
   const handleRemove = useCallback(
@@ -130,8 +129,8 @@ const ToasterContainer: React.FC<IProps> = ({ delay = 5000 }) => {
 
   // Listen to event changes
   useEffect(() => {
-    eventManager.on(TOASTER_EVENT.SHOW, handleEvent);
-    eventManager.on(TOASTER_EVENT.CLEAR, () => {
+    eventManager.on(ToasterEvent.SHOW, handleEvent);
+    eventManager.on(ToasterEvent.CLEAR, () => {
       setShown([]);
       setToasts({});
     });
@@ -157,18 +156,18 @@ const ToasterContainer: React.FC<IProps> = ({ delay = 5000 }) => {
   return !Object.keys(toasts).length ? null : (
     <ul className={styles.container}>
       {Object.entries(toasts).map(([key, value]) => {
-        const messageProps: MessageProps = { ...value };
+        const messageProps = { ...value } as any;
 
-        if (value.type === TOASTER_TYPE.ERROR) {
+        if (value.type === ToasterType.ERROR) {
           messageProps.icon = 'times circle';
           messageProps.error = true;
-        } else if (value.type === TOASTER_TYPE.INFO) {
+        } else if (value.type === ToasterType.INFO) {
           messageProps.icon = 'question circle';
           messageProps.info = true;
-        } else if (value.type === TOASTER_TYPE.WARNING) {
+        } else if (value.type === ToasterType.WARNING) {
           messageProps.icon = 'exclamation circle';
           messageProps.warning = true;
-        } else if (value.type === TOASTER_TYPE.SUCCESS) {
+        } else if (value.type === ToasterType.SUCCESS) {
           messageProps.icon = 'check circle';
           messageProps.success = true;
         }
@@ -179,7 +178,7 @@ const ToasterContainer: React.FC<IProps> = ({ delay = 5000 }) => {
             onMouseEnter={() => handleMouseOver(key)}
             onMouseLeave={() => handleTimer(key)}
           >
-            <Message
+            <div
               {...messageProps}
               size="tiny"
               onDismiss={() => handleRemove(key)}

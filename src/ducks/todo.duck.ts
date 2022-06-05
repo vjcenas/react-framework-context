@@ -6,11 +6,10 @@ export const actionTypes = {
   TODO_DATA_FETCH: 'TODO_DATA_FETCH',
   TODO_LIST_FETCH: 'TODO_LIST_FETCH',
   TODO_LIST_BY_USER_FETCH: 'TODO_LIST_BY_USER_FETCH',
-  TODO_ADD_AGE: 'TODO_ADD_AGE',
 } as const;
 
 // This is where we put the actions that have promise/async payload like HTTP request
-export const asyncActions = {
+export const duckActions = {
   dataGET: {
     type: actionTypes.TODO_DATA_FETCH,
     service: services.dataGET,
@@ -38,7 +37,7 @@ export const defaultState: ITodoState = {
 
 const TodoReducer = (
   state = defaultState,
-  action: IReducerAction<typeof asyncActions>
+  action: IReducerAction<typeof duckActions>
 ): ITodoState => {
   switch (action.type) {
     case actionTypes.TODO_DATA_FETCH: {

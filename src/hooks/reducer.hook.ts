@@ -18,10 +18,9 @@ const useReducerHook = <
   state: S;
   actions: IReturnActions<A>;
 } => {
-  // Memoized actions
   const actionsRef = useRef(actionList);
 
-  // Prevents reinitializing reducer
+  // Initializing reducer
   const customReducer = useCallback(
     (state, action) => {
       switch (action.status) {
@@ -36,6 +35,7 @@ const useReducerHook = <
               },
             },
           };
+
         case TYPE_FETCHED:
           // Updates the main reducer state
           return {
@@ -53,6 +53,7 @@ const useReducerHook = <
               action
             ),
           };
+
         case TYPE_ERROR:
           return {
             ...state,
@@ -60,10 +61,11 @@ const useReducerHook = <
               ...state.status,
               [action.type]: {
                 fetching: false,
-                error: (action.payload as Error).message || action.payload,
+                error: action.payload,
               },
             },
           };
+
         default:
           // For sync actions
           return {

@@ -30,9 +30,7 @@ export const duckActions = {
   // This is a sync action
   setData: (user: IUser) => ({
     type: userActionTypes.USER_DATA_SET,
-    payload: {
-      user,
-    },
+    payload: user,
   }),
 };
 
@@ -56,48 +54,29 @@ const UserReducer = (
 ): IUserState => {
   switch (action.type) {
     case userActionTypes.USER_DATA_SET:
-    case userActionTypes.USER_DATA_READ:
-    case userActionTypes.USER_DATA_UPDATE:
-    case userActionTypes.USER_DATA_CREATE: {
+    case userActionTypes.USER_DATA_READ: {
       return {
         ...state,
-        data: action.payload?.user,
+        data: action.payload,
       };
     }
 
     case userActionTypes.USER_LIST_READ: {
       return {
         ...state,
-        list: action.payload?.rows ?? [],
-        total: action.payload?.count ?? 0,
+        list: action.payload ?? [],
       };
     }
 
-    case userActionTypes.USER_DATA_DELETE: {
-      if (action.params) {
-        const [id] = action.params;
-        const list = state.list.filter((value) => value.userId !== id);
-
-        return {
-          ...state,
-          data: undefined,
-          total: state.total - (state.list.length - list.length),
-          list,
-        };
-      }
-
-      return state;
-    }
-
     case userActionTypes.USER_ADD_AGE: {
-        return {
-          ...state,
-          data: {
-            ...(state.data as IUser),
-            age: Number(state.data?.age ?? 0) + Number(action.payload),
-          },
-        };
-      }
+      return {
+        ...state,
+        data: {
+          ...(state.data as IUser),
+          age: Number(state.data?.age ?? 0) + Number(action.payload),
+        },
+      };
+    }
 
     default: {
       return state;

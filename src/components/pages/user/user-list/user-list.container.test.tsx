@@ -1,5 +1,5 @@
 import React from 'react';
-import { asyncActions } from 'src/ducks/user.duck';
+import { duckActions } from 'src/ducks/user.duck';
 import { act } from 'react-dom/test-utils';
 import { mount } from 'enzyme';
 import { UserProvider } from 'src/contexts';
@@ -10,7 +10,7 @@ import UserListContainer from './user-list.container';
 
 describe('UserContainer', () => {
   it('should call dataGET', async () => {
-    const spy = jest.spyOn(asyncActions.listGET, 'service');
+    const spy = jest.spyOn(duckActions.listGET, 'service');
 
     await act(async () => {
       await mount(
@@ -31,7 +31,7 @@ describe('UserContainer', () => {
     let wrapper;
 
     jest
-      .spyOn(asyncActions.listGET, 'service')
+      .spyOn(duckActions.listGET, 'service')
       .mockImplementationOnce(() => Promise.resolve(data));
 
     await act(async () => {

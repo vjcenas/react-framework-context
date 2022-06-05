@@ -1,5 +1,5 @@
 import React from 'react';
-import { actionTypes, asyncActions, syncActions } from 'src/ducks/user.duck';
+import { duckActions, userActionTypes } from 'src/ducks/user.duck';
 import { act } from 'react-dom/test-utils';
 import { mount } from 'enzyme';
 import App from 'src/app';
@@ -20,7 +20,7 @@ describe('UserContainer', () => {
   });
 
   it('should call dataGET', async () => {
-    const spy = jest.spyOn(asyncActions.dataGET, 'service');
+    const spy = jest.spyOn(duckActions.dataGET, 'service');
 
     await act(async () => {
       await mount(
@@ -44,7 +44,7 @@ describe('UserContainer', () => {
     let wrapper = mount(<div />);
 
     jest
-      .spyOn(asyncActions.dataGET, 'service')
+      .spyOn(duckActions.dataGET, 'service')
       .mockImplementationOnce(() => Promise.resolve(data));
 
     await act(async () => {
@@ -71,7 +71,7 @@ describe('UserContainer', () => {
     const data = userMock();
 
     const service = jest
-      .spyOn(asyncActions.dataGET, 'service')
+      .spyOn(duckActions.dataGET, 'service')
       .mockImplementationOnce(() => Promise.resolve(data));
 
     await act(async () => {
@@ -96,13 +96,13 @@ describe('UserContainer', () => {
     let wrapper = mount(<div />);
 
     jest
-      .spyOn(asyncActions.dataGET, 'service')
+      .spyOn(duckActions.dataGET, 'service')
       .mockImplementationOnce(() => Promise.resolve(data));
 
     const addAge = jest
-      .spyOn(syncActions, 'addAge')
+      .spyOn(duckActions, 'addAge')
       .mockImplementationOnce(() => ({
-        type: actionTypes.USER_ADD_AGE,
+        type: userActionTypes.USER_ADD_AGE,
         payload: 2,
       }));
 
